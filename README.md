@@ -1,173 +1,172 @@
-# Elder Health Monitoring System
+# 🩺 Elder Health Monitoring System
 
-Monorepo with:
+A full-stack web application to monitor elderly health with **secure authentication, role-based dashboards, real-time alerts, and health history tracking**.
 
-- `backend/` → Node.js + Express + MongoDB (Mongoose) + JWT + bcrypt
-- `frontend/` → Next.js (App Router) + Tailwind CSS + TanStack Query + Axios
+---
 
-## 1) Folder structure
+## 🚀 Tech Stack
 
-```
-elder-health-app/
-  backend/
-    src/
-      config/
-        db.js
-        env.js
-      middleware/
-        authMiddleware.js
-        errorHandler.js
-        roleMiddleware.js
-      models/
-        Health.js
-        User.js
-      routes/
-        alerts.js
-        auth.js
-        health.js
-        index.js
-        patient.js
-      utils/
-        healthLogic.js
-        jwt.js
-      server.js
-    .env.example
-    package.json
-  frontend/
-    src/
-      app/
-        dashboard/page.tsx
-        login/page.tsx
-        register/page.tsx
-        layout.tsx
-        page.tsx
-        providers.tsx
-        globals.css
-      components/
-        AppShell.tsx
-        ui/
-          Badge.tsx
-          Button.tsx
-          Card.tsx
-          Input.tsx
-      lib/
-        api.ts
-        auth.ts
-    .env.example
-    package.json
-  package.json
-```
+### 🔹 Backend
 
-## 2) Backend setup code (APIs + rules)
+* ⚙️ Node.js
+* 🚀 Express.js
+* 🍃 MongoDB (Mongoose)
+* 🔐 JWT Authentication
+* 🔒 bcrypt
 
-### Endpoints (implemented)
+### 🔹 Frontend
 
-- `POST /auth/register`
-- `POST /auth/login`
-- `POST /api/health` (requires `care_manager`)
-- `GET /api/patient/:id` (any authenticated role)
-- `GET /api/alerts` (any authenticated role)
+* ⚛️ Next.js (App Router)
+* 🎨 Tailwind CSS
+* 🔄 TanStack Query
+* 🌐 Axios
 
-### Health alert rules (exact)
+---
 
-- `heartRate < 50 OR > 110` → **Alert**
-- `oxygen < 92` → **Critical**
-- `bp systolic > 140 OR diastolic > 90` → **Warning**
+## 🔐 Features
 
-Priority: `Critical > Alert > Warning > Normal`
+* 🔑 Authentication (Login/Register)
+* 👥 Role-based dashboards
+* 📊 Health monitoring system
+* 🚨 Alert classification
+* ✏️ Edit & update health records
+* ⚡ Emergency button (UI simulation)
 
-## 3) Frontend setup code (role dashboards)
+---
 
-- **Login**: authenticates and stores JWT + user in `localStorage`
-- **Register**: live password validation (red border + “Strong password required”)
-- **Dashboard**:
-  - `care_manager`: can submit readings
-  - `parent`: view readings + emergency button (UI only)
-  - `child`: view-only
-- **TanStack Query** used for all API calls
-- **Axios interceptor** attaches `Authorization: Bearer <token>`
+## 📊 Alert Logic
 
-## 4) Installation steps
+* 🔴 Oxygen < 92 → Critical
+* 🟡 Heart Rate < 50 or > 110 → Alert
+* 🟠 BP > 140/90 → Warning
+* 🟢 Otherwise → Normal
 
-From the monorepo root:
+---
+
+# 📸 Screenshots
+
+---
+
+## 🔐 Login Page
+
+![Login](images/Login.png)
+
+---
+
+## 📝 Registration Page
+
+![Register](images/Registaration.png)
+
+---
+
+## 👨‍⚕️ Care Manager Dashboard
+
+![Care Manager](images/CareManager.png)
+
+---
+
+## 👨‍👩‍👧 Parent Dashboard
+
+![Parent](images/ParentPage.png)
+
+---
+
+## 👶 Child Dashboard
+
+![Child](images/ChildPage.png)
+
+---
+
+## 📊 Main Dashboard
+
+![Dashboard](images/Dashboard.png)
+
+---
+
+## ⚙️ Installation
+
+### Clone Repo
 
 ```bash
+git clone https://github.com/jalumuru-sagar/elder-health-app.git
 cd elder-health-app
 ```
 
-### Backend env
+---
 
-Copy and fill:
-
-```bash
-copy backend\\.env.example backend\\.env
-```
-
-Set at least:
-
-- `MONGODB_URI`
-- `JWT_SECRET`
-- `CLIENT_ORIGIN` (default `http://localhost:3000`)
-
-### Frontend env
-
-```bash
-copy frontend\\.env.example frontend\\.env.local
-```
-
-Set:
-
-- `NEXT_PUBLIC_API_URL=http://localhost:5000`
-
-## 5) Run commands (local dev)
-
-### Run both (recommended)
-
-```bash
-npm run dev
-```
-
-### Or separately
-
-Backend:
+### Backend Setup
 
 ```bash
 cd backend
+copy .env.example .env
+```
+
+Add:
+
+```
+MONGODB_URI=your_mongodb_url
+JWT_SECRET=your_secret
+CLIENT_ORIGIN=http://localhost:3000
+```
+
+Run:
+
+```bash
+npm install
 npm run dev
 ```
 
-Frontend:
+---
+
+### Frontend Setup
 
 ```bash
 cd frontend
+copy .env.example .env.local
+```
+
+Add:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+
+Run:
+
+```bash
+npm install
 npm run dev
 ```
 
-Frontend: `http://localhost:3000`  
-Backend: `http://localhost:5000/healthz`
+---
 
-## 6) Deployment steps (Vercel + Render)
+## ▶️ Run Project
 
-### Backend on Render
+* Frontend → http://localhost:3000
+* Backend → http://localhost:5000/healthz
 
-1. Create a new **Web Service** from your repo.
-2. **Root directory**: `backend`
-3. **Build command**: `npm install`
-4. **Start command**: `npm run start`
-5. Add environment variables in Render:
-   - `NODE_ENV=production`
-   - `PORT=10000` (Render sets `PORT`, but it’s fine to rely on it)
-   - `MONGODB_URI=...`
-   - `JWT_SECRET=...`
-   - `JWT_EXPIRES_IN=7d`
-   - `CLIENT_ORIGIN=https://<your-vercel-domain>`
-6. Ensure your MongoDB is reachable (MongoDB Atlas recommended).
+---
 
-### Frontend on Vercel
+## 🌐 Deployment
 
-1. Import project into Vercel.
-2. **Root directory**: `frontend`
-3. Add env var:
-   - `NEXT_PUBLIC_API_URL=https://<your-render-backend-domain>`
-4. Deploy.
+### Backend → Render
 
+### Frontend → Vercel
+
+---
+
+## 💡 Highlights
+
+* 🔐 Secure JWT Authentication
+* 📊 Real-time health tracking
+* 🎯 Role-based access
+* 🧠 Smart alert system
+* ✏️ Editable records
+
+---
+
+## 👨‍💻 Author
+
+**Jalumuru Sagar**
+
+---
