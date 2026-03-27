@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import path from "path";
-import { fileURLToPath } from "url";
+// Backend only serves API; no frontend static assets are served here.
 
 import { env } from "./config/env.js";
 import { connectDb } from "./config/db.js";
@@ -11,10 +10,6 @@ import routes from "./routes/index.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
 const app = express();
-
-// Fix __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.set("trust proxy", 1);
 
@@ -31,22 +26,8 @@ app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 // ✅ Health check (Render uses this)
 app.get("/healthz", (req, res) => res.status(200).json({ ok: true }));
 
-// ✅ API routes
-app.use("/api", routes);
-
-// -----------------------------
-// 🔥 SERVE FRONTEND (SAFE)
-// -----------------------------
-
-const frontendPath = path.join(__dirname, "../../frontend/out");
-
-// Serve static files
-app.use(express.static(frontendPath));
-
-// ✅ Universal fallback route (NO CRASH)
-app.use((req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
+// ✅ API routes only (no frontend serving)
+app.use(routes);
 
 // -----------------------------
 
@@ -61,10 +42,11 @@ app.use(errorHandler);
 async function start() {
   await connectDb();
 
-  const PORT = process.env.PORT || 10000;
+  const PORT = Number(process.env.PORT ?? env.PORT ?? 5000);
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    // eslint-disable-next-line no-console
+    console.log(`API listening on port ${PORT}`);
   });
 }
 
