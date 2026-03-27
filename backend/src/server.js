@@ -34,22 +34,22 @@ app.get("/healthz", (req, res) => res.status(200).json({ ok: true }));
 app.use("/api", routes);
 
 // -----------------------------
-// 🔥 SERVE FRONTEND (IMPORTANT)
+// 🔥 SERVE FRONTEND (FINAL FIX)
 // -----------------------------
 
-// Path to exported frontend
 const frontendPath = path.join(__dirname, "../../frontend/out");
 
 // Serve static files
 app.use(express.static(frontendPath));
 
-// ✅ FIXED ROUTE (IMPORTANT CHANGE HERE)
-app.get("/*", (req, res) => {
+// ✅ FINAL UNIVERSAL ROUTE (NO ERRORS)
+app.use((req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // -----------------------------
 
+// ⚠️ IMPORTANT: keep these AFTER frontend serving
 app.use(notFound);
 app.use(errorHandler);
 
