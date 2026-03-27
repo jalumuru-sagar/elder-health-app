@@ -27,10 +27,10 @@ app.use(
 app.use(express.json());
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 
-// Health check
+// ✅ Health check
 app.get("/healthz", (req, res) => res.status(200).json({ ok: true }));
 
-// API routes
+// ✅ API routes
 app.use("/api", routes);
 
 // -----------------------------
@@ -43,8 +43,8 @@ const frontendPath = path.join(__dirname, "../../frontend/out");
 // Serve static files
 app.use(express.static(frontendPath));
 
-// Handle React/Next routing
-app.get("*", (req, res) => {
+// ✅ FIXED ROUTE (IMPORTANT CHANGE HERE)
+app.get("/*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
