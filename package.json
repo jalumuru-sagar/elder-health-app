@@ -1,18 +1,22 @@
 {
   "name": "elder-health-app",
   "version": "1.0.0",
+  "description": "Elder Health Monitoring System - Full Stack",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently -n BACKEND,FRONTEND -c yellow,cyan \"npm:dev:backend\" \"npm:dev:frontend\"",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
+    
     "start:backend": "npm --prefix backend run start",
-    "start:frontend": "npm --prefix frontend run start"
+    "start:frontend": "npm --prefix frontend run start",
+
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "start": "node backend/src/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jalumuru Sagar",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "concurrently": "^9.2.1"
   }
