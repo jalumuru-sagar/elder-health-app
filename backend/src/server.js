@@ -18,6 +18,7 @@ const __dirname = path.dirname(__filename);
 
 app.set("trust proxy", 1);
 
+// Middlewares
 app.use(helmet());
 app.use(
   cors({
@@ -27,14 +28,14 @@ app.use(
 app.use(express.json());
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 
-// ✅ Health check
+// ✅ Health check (Render uses this)
 app.get("/healthz", (req, res) => res.status(200).json({ ok: true }));
 
 // ✅ API routes
 app.use("/api", routes);
 
 // -----------------------------
-// 🔥 SERVE FRONTEND (FINAL FIX)
+// 🔥 SERVE FRONTEND (SAFE)
 // -----------------------------
 
 const frontendPath = path.join(__dirname, "../../frontend/out");
@@ -42,25 +43,32 @@ const frontendPath = path.join(__dirname, "../../frontend/out");
 // Serve static files
 app.use(express.static(frontendPath));
 
-// ✅ FINAL UNIVERSAL ROUTE (NO ERRORS)
+// ✅ Universal fallback route (NO CRASH)
 app.use((req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // -----------------------------
 
-// ⚠️ IMPORTANT: keep these AFTER frontend serving
+// Error handlers (keep at end)
 app.use(notFound);
 app.use(errorHandler);
 
+// -----------------------------
+// 🚀 START SERVER (FINAL FIX)
+// -----------------------------
+
 async function start() {
   await connectDb();
-  app.listen(env.PORT, () => {
-    console.log(`🚀 Server running on port ${env.PORT}`);
+
+  const PORT = process.env.PORT || 10000;
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
   });
 }
 
 start().catch((err) => {
-  console.error(err);
+  console.error("❌ Server failed to start:", err);
   process.exit(1);
 });
